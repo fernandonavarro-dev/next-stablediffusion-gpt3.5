@@ -1,8 +1,11 @@
 'use client';
-import { useState } from 'react';
-import { generateImage } from '../../utils/stablediffusion';
+import { MutableRefObject, useRef, useState } from 'react';
+// import { generateImage } from '../../utils/stablediffusion';
+import axios from 'axios';
 
+// Home component
 export default function Home() {
+  // State variables
   const [key, setKey] = useState('');
   const [prompt, setPrompt] = useState('');
   const [width, setWidth] = useState(512);
@@ -11,16 +14,47 @@ export default function Home() {
   const [advancedOptionsVisible, setAdvancedOptionsVisible] = useState(false);
   const [imageUrl, setImageUrl] = useState('');
 
+  // Input references for advanced options
+  const samplesInput = useRef<HTMLInputElement | null>(null);
+  const numInferenceStepsInput = useRef<HTMLInputElement | null>(null);
+  const guidanceScaleInput = useRef<HTMLInputElement | null>(null);
+  const enhancePromptInput = useRef<HTMLSelectElement | null>(null);
+  const seedInput = useRef<HTMLInputElement | null>(null);
+  const webhookInput = useRef<HTMLInputElement | null>(null);
+  const trackIdInput = useRef<HTMLInputElement | null>(null);
+
+  // Function to handle image generation
   const handleGenerateImage = async () => {
     try {
+      // Prepare options for API call
       const options = {
+        key,
         width,
         height,
         negative_prompt: negativePrompt,
+        samples: samplesInput.current
+          ? parseInt(samplesInput.current.value)
+          : 1,
+        num_inference_steps: numInferenceStepsInput.current
+          ? parseInt(numInferenceStepsInput.current.value)
+          : 20,
+        guidance_scale: guidanceScaleInput.current
+          ? parseFloat(guidanceScaleInput.current.value)
+          : 7.5,
+        enhance_prompt: enhancePromptInput.current
+          ? enhancePromptInput.current.value
+          : 'yes',
+        seed: seedInput.current ? seedInput.current.value : null,
+        webhook: webhookInput.current ? webhookInput.current.value : null,
+        track_id: trackIdInput.current ? trackIdInput.current.value : null,
       };
 
-      const imageData = await generateImage(prompt, options);
-      setImageUrl(imageData.output[0]);
+      // Make API call and set the generated image URL
+      const response = await axios.post('/api/generateImage', {
+        prompt: prompt,
+        options: options,
+      });
+      setImageUrl(response.data.output[0]);
     } catch (error) {
       console.error('Error:', error);
     }
@@ -114,6 +148,7 @@ export default function Home() {
                 </label>
                 <input
                   id="samples"
+                  ref={samplesInput}
                   type="number"
                   min="1"
                   defaultValue="1"
@@ -126,6 +161,7 @@ export default function Home() {
                 </label>
                 <input
                   id="num_inference_steps"
+                  ref={numInferenceStepsInput}
                   type="number"
                   min="1"
                   max="50"
@@ -139,6 +175,7 @@ export default function Home() {
                 </label>
                 <input
                   id="guidance_scale"
+                  ref={guidanceScaleInput}
                   type="number"
                   min="1"
                   max="20"
@@ -153,6 +190,7 @@ export default function Home() {
                 </label>
                 <select
                   id="enhance_prompt"
+                  ref={enhancePromptInput}
                   defaultValue="yes"
                   className="border border-gray-300 px-3 py-2 w-full"
                 >
@@ -166,6 +204,7 @@ export default function Home() {
                 </label>
                 <input
                   id="seed"
+                  ref={seedInput}
                   type="text"
                   placeholder="Leave blank for a random seed"
                   className="border border-gray-300 px-3 py-2 w-full"
@@ -177,6 +216,7 @@ export default function Home() {
                 </label>
                 <input
                   id="webhook"
+                  ref={webhookInput}
                   type="text"
                   placeholder="Webhook URL"
                   className="border border-gray-300 px-3 py-2 w-full"
@@ -188,6 +228,7 @@ export default function Home() {
                 </label>
                 <input
                   id="track_id"
+                  ref={trackIdInput}
                   type="text"
                   placeholder="Tracking ID"
                   className="border border-gray-300 px-3 py-2 w-full"

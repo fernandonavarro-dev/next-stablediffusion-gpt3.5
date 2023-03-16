@@ -1,10 +1,29 @@
 import axios from 'axios';
 
 const API_URL = 'https://stablediffusionapi.com/api/v3/text2img';
-const API_KEY = process.env.STABLEDIFFUSION_API_KEY;
+const API_KEY = process.env.NEXT_PUBLIC_STABLEDIFFUSION_API_KEY;
 
-export const generateImage = async (text, options = {}) => {
+// Define Options interface for specifying image generation options
+interface Options {
+  width?: number;
+  height?: number;
+  samples?: number;
+  negative_prompt?: string;
+  num_inference_steps?: number;
+  guidance_scale?: number;
+  enhance_prompt?: string;
+  seed?: string | null;
+  webhook?: string | null;
+  track_id?: string | null;
+}
+
+// Generate image function using the API
+export const generateImage = async (
+  text: string,
+  options: Options = {}
+): Promise<any> => {
   try {
+    // Make a POST request to the API with the specified options
     const response = await axios.post(
       API_URL,
       {
