@@ -1,6 +1,5 @@
 'use client';
-// import { MutableRefObject, useRef, useState } from 'react';
-// import axios from 'axios';
+import ChatGPTAssistant from '../../components/ChatGPTAssistant';
 import { ImageGenerator } from '../../components/ImageGenerator';
 
 export default function Home() {
@@ -16,6 +15,7 @@ export default function Home() {
           }}
         />
       </div>
+      <ChatGPTAssistant />
     </div>
   );
 }
