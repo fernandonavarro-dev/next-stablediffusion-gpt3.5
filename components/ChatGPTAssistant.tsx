@@ -27,6 +27,15 @@ function ChatGPTAssistant() {
     },
   ]);
 
+  const [inputValue, setInputValue] = useState('');
+
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    if (inputValue.trim() === '') return;
+    await handleSend(inputValue);
+    setInputValue('');
+  };
+
   const handleSend = async (message) => {
     const newMessage = {
       message,
@@ -104,26 +113,38 @@ function ChatGPTAssistant() {
   }
 
   return (
-    <div className="fixed bottom-4 right-4 w-80 h-96">
-      <div
-      //   style={{ position: 'relative', height: '450px', width: '350px' }}
-      >
-        <MainContainer>
-          <ChatContainer>
-            <MessageList
-              scrollBehavior="smooth"
-              typingIndicator={
-                typing ? <TypingIndicator content="ChatGPT is typing" /> : null
+    <div className="absolute bottom-0 right-4 w-80 h-96 bg-gray-800 p-4 rounded-lg shadow-lg">
+      <div className="text-xl font-semibold mb-4">ChatGPT Assistant</div>
+
+      <div className="h-64 overflow-y-auto mb-4">
+        {messages.map((message, index) => (
+          <div
+            key={index}
+            className={`mb-2 ${message.sender === 'user' ? 'text-right' : ''}`}
+          >
+            <span
+              className={
+                message.sender === 'user' ? 'text-blue-400' : 'text-green-400'
               }
             >
-              {messages.map((message, i) => {
-                return <Message key={i} model={message} />;
-              })}
-            </MessageList>
-            <MessageInput placeholder="Type message here" onSend={handleSend} />
-          </ChatContainer>
-        </MainContainer>
+              {message.sender === 'user' ? 'You: ' : 'Assistant: '}
+            </span>
+            {message.message}
+          </div>
+        ))}
       </div>
+
+      <form onSubmit={handleSubmit} className="flex">
+        <input
+          type="text"
+          className="flex-grow bg-gray-700 text-gray-200 rounded-l-lg p-2"
+          value={inputValue}
+          onChange={(e) => setInputValue(e.target.value)}
+        />
+        <button type="submit" className="bg-blue-500 p-2 rounded-r-lg">
+          Send
+        </button>
+      </form>
     </div>
   );
 }

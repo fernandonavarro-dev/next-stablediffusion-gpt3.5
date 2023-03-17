@@ -1,11 +1,11 @@
 import { MutableRefObject, useRef, useState } from 'react';
 import axios from 'axios';
 
-interface ImageGeneratorProps {
+interface ImageGeneratorFormProps {
   onGenerate: (imageUrl: string) => void;
 }
 
-export const ImageGenerator: React.FC<ImageGeneratorProps> = ({
+export const ImageGeneratorForm: React.FC<ImageGeneratorFormProps> = ({
   onGenerate,
 }) => {
   // State variables
@@ -57,7 +57,9 @@ export const ImageGenerator: React.FC<ImageGeneratorProps> = ({
         prompt: prompt,
         options: options,
       });
-      setImageUrl(response.data.output[0]);
+      const generatedImageUrl = response.data.output[0];
+      setImageUrl(generatedImageUrl);
+      onGenerate(generatedImageUrl);
     } catch (error) {
       console.error('Error:', error);
     }
@@ -71,7 +73,7 @@ export const ImageGenerator: React.FC<ImageGeneratorProps> = ({
           e.preventDefault();
           handleGenerateImage();
         }}
-        className="grid grid-cols-1 md:grid-cols-2 gap-4"
+        className="grid grid-cols-1 gap-4"
       >
         <div className="mb-4">
           <label htmlFor="key" className="block mb-2">
@@ -244,22 +246,17 @@ export const ImageGenerator: React.FC<ImageGeneratorProps> = ({
 
         <button
           type="submit"
-          className="bg-blue-500 text-white px-4 py-2 rounded"
+          className="bg-blue-500 text-blue-100 px-4 py-2 rounded"
         >
           Generate Image
         </button>
       </form>
 
-      {imageUrl && (
-        <div className="mt-8">
-          <h2 className="text-2xl font-bold mb-2">Generated Image:</h2>
-          <img
-            src={imageUrl}
-            alt="Generated"
-            className="border border-gray-300"
-          />
-        </div>
-      )}
+      {/* {imageUrl && (
+        <script>
+          {`document.getElementById('generatedImage').src = "${imageUrl}";`}
+        </script>
+      )} */}
     </>
   );
 };
