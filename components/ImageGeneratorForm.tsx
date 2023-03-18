@@ -1,12 +1,16 @@
 import { MutableRefObject, useRef, useState } from 'react';
 import axios from 'axios';
 
-interface ImageGeneratorProps {
-  onGenerate: (imageUrl: string) => void;
+interface ImageGeneratorFormProps {
+  onGenerate: (imageUrl: string, promptText: string) => void;
+  isLoading: boolean;
+  setIsLoading: (isLoading: boolean) => void;
 }
 
-export const ImageGenerator: React.FC<ImageGeneratorProps> = ({
+export const ImageGeneratorForm: React.FC<ImageGeneratorFormProps> = ({
   onGenerate,
+  isLoading,
+  setIsLoading,
 }) => {
   // State variables
   const [key, setKey] = useState('');
@@ -29,6 +33,7 @@ export const ImageGenerator: React.FC<ImageGeneratorProps> = ({
   // Function to handle image generation
   const handleGenerateImage = async () => {
     try {
+      setIsLoading(true);
       // Prepare options for API call
       const options = {
         key,
@@ -57,10 +62,19 @@ export const ImageGenerator: React.FC<ImageGeneratorProps> = ({
         prompt: prompt,
         options: options,
       });
-      setImageUrl(response.data.output[0]);
+      const generatedImageUrl = response.data.output[0];
+      setImageUrl(generatedImageUrl);
+      onGenerate(generatedImageUrl, prompt);
+      resetForm();
     } catch (error) {
       console.error('Error:', error);
+      setIsLoading(false);
     }
+  };
+
+  const resetForm = () => {
+    setPrompt('');
+    setNegativePrompt('');
   };
 
   // Render the form
@@ -71,7 +85,7 @@ export const ImageGenerator: React.FC<ImageGeneratorProps> = ({
           e.preventDefault();
           handleGenerateImage();
         }}
-        className="grid grid-cols-1 md:grid-cols-2 gap-4"
+        className="grid grid-cols-1 gap-4"
       >
         <div className="mb-4">
           <label htmlFor="key" className="block mb-2">
@@ -244,22 +258,17 @@ export const ImageGenerator: React.FC<ImageGeneratorProps> = ({
 
         <button
           type="submit"
-          className="bg-blue-500 text-white px-4 py-2 rounded"
+          className="bg-blue-500 text-blue-100 px-4 py-2 rounded-lg hover:bg-blue-700"
         >
           Generate Image
         </button>
+        {isLoading && (
+          <div className="mt-2 text-yellow-400 font-semibold">Loading...</div>
+        )}
       </form>
-
-      {imageUrl && (
-        <div className="mt-8">
-          <h2 className="text-2xl font-bold mb-2">Generated Image:</h2>
-          <img
-            src={imageUrl}
-            alt="Generated"
-            className="border border-gray-300"
-          />
-        </div>
-      )}
     </>
   );
 };
+function setIsLoading(arg0: boolean) {
+  throw new Error('Function not implemented.');
+}
