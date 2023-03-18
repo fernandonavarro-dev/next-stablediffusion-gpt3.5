@@ -1,42 +1,59 @@
 import { useState } from 'react';
-// import './App.css';
 import '@chatscope/chat-ui-kit-styles/dist/default/styles.min.css';
-import {
-  MainContainer,
-  ChatContainer,
-  MessageList,
-  Message,
-  MessageInput,
-  TypingIndicator,
-} from '@chatscope/chat-ui-kit-react';
+// import {
+//   MainContainer,
+//   ChatContainer,
+//   MessageList,
+//   Message,
+//   MessageInput,
+//   TypingIndicator,
+// } from '@chatscope/chat-ui-kit-react';
+
+import { ExpandCollapseToggle } from './ExpandCollapseToggle';
+
+type MessageObject = {
+  message: string;
+  direction?: string;
+  sender: string;
+  sentTime?: string;
+};
 
 const systemMessage = {
   role: 'system',
-  content: "Explain all concepts like I'm a junior/mid-level web developer",
+  content:
+    "You are an AI trained to assist with prompt engineering and generating images using generative AI. Provide only the prompt text for generating images. Explain concepts like you're addressing a junior/mid-level web developer.",
 };
 
 const API_KEY = process.env.NEXT_PUBLIC_OPENAI_API_KEY;
 
 function ChatGPTAssistant() {
   const [typing, setTyping] = useState(false);
-  const [messages, setMessages] = useState([
+  const [messages, setMessages] = useState<MessageObject[]>([
     {
-      message: "Hello, I'm ChatGPT! Ask me anything!",
+      message:
+        "Hello, I'm ChatGPT! Let me know if you need help with your prompts!",
       sentTime: 'just now',
       sender: 'ChatGPT',
     },
   ]);
 
   const [inputValue, setInputValue] = useState('');
+  const [expanded, setExpanded] = useState(true);
 
-  const handleSubmit = async (event) => {
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (inputValue.trim() === '') return;
-    await handleSend(inputValue);
+    const formattedInputValue = `Give me a prompt for ${inputValue}`;
+    await handleSend(formattedInputValue);
     setInputValue('');
   };
 
-  const handleSend = async (message) => {
+  // Add a function to toggle the expand/collapse state
+  const handleToggleExpand = () => {
+    setExpanded(!expanded);
+  };
+
+  const handleSend = async (message: string) => {
     const newMessage = {
       message,
       direction: 'outgoing',
@@ -52,13 +69,13 @@ function ChatGPTAssistant() {
     await processMessageToChatGPT(newMessages);
   };
 
-  async function processMessageToChatGPT(chatMessages) {
+  async function processMessageToChatGPT(chatMessages: MessageObject[]) {
     // messages is an array of messages
     // Format messages for chatGPT API
     // API is expecting objects in format of { role: "user" or "assistant", "content": "message here"}
     // So we need to reformat
 
-    let apiMessages = chatMessages.map((messageObject) => {
+    let apiMessages = chatMessages.map((messageObject: MessageObject) => {
       let role = '';
       if (messageObject.sender === 'ChatGPT') {
         role = 'assistant';
@@ -112,39 +129,80 @@ function ChatGPTAssistant() {
     }
   }
 
-  return (
-    <div className="absolute bottom-0 right-4 w-80 h-96 bg-gray-800 p-4 rounded-lg shadow-lg">
-      <div className="text-xl font-semibold mb-4">ChatGPT Assistant</div>
+  function formatAssistantMessage(message: string) {
+    const parts = message.split(/("[^"]+")/);
+    return parts.map((part, index) => {
+      if (part.startsWith('"') && part.endsWith('"')) {
+        return (
+          <>
+            <br key={`before-${index}`} />
+            <p key={index} className="mb-0 mt-2 font-bold">
+              {part.slice(1, -1)}
+            </p>
+            <br key={`after-${index}`} />
+          </>
+        );
+      } else {
+        return <span key={index}>{part}</span>;
+      }
+    });
+  }
 
-      <div className="h-64 overflow-y-auto mb-4">
-        {messages.map((message, index) => (
-          <div
-            key={index}
-            className={`mb-2 ${message.sender === 'user' ? 'text-right' : ''}`}
-          >
-            <span
-              className={
-                message.sender === 'user' ? 'text-blue-400' : 'text-green-400'
-              }
-            >
-              {message.sender === 'user' ? 'You: ' : 'Assistant: '}
-            </span>
-            {message.message}
-          </div>
-        ))}
+  return (
+    <div
+      className={`fixed bottom-3 right-4 w-2/5 ${
+        expanded ? 'h-96' : 'h-16'
+      } bg-gray-800 p-4 rounded-lg shadow-lg`}
+    >
+      <div className="flex items-center justify-between">
+        <div className="text-xl font-semibold mb-4">
+          ChatGPT Prompt Assistant
+        </div>
+        <ExpandCollapseToggle
+          expanded={expanded}
+          onToggleExpand={handleToggleExpand}
+        />
       </div>
 
-      <form onSubmit={handleSubmit} className="flex">
-        <input
-          type="text"
-          className="flex-grow bg-gray-700 text-gray-200 rounded-l-lg p-2"
-          value={inputValue}
-          onChange={(e) => setInputValue(e.target.value)}
-        />
-        <button type="submit" className="bg-blue-500 p-2 rounded-r-lg">
-          Send
-        </button>
-      </form>
+      {expanded && (
+        <>
+          <div className="h-64 overflow-y-auto mb-4 p-1">
+            {messages.map((message, index) => (
+              <div
+                key={index}
+                className={`mb-2 ${
+                  message.sender === 'user' ? 'text-right' : ''
+                }`}
+              >
+                <span
+                  className={
+                    message.sender === 'user'
+                      ? 'text-blue-400'
+                      : 'text-green-400'
+                  }
+                >
+                  {message.sender === 'user' ? 'You: ' : 'Assistant: '}
+                </span>
+                {message.sender === 'ChatGPT'
+                  ? formatAssistantMessage(message.message)
+                  : message.message}
+              </div>
+            ))}
+          </div>
+
+          <form onSubmit={handleSubmit} className="flex">
+            <input
+              type="text"
+              className="flex-grow bg-gray-700 text-gray-200 rounded-l-lg p-2"
+              value={inputValue}
+              onChange={(e) => setInputValue(e.target.value)}
+            />
+            <button type="submit" className="bg-blue-500 p-2 rounded-r-lg">
+              Send
+            </button>
+          </form>
+        </>
+      )}
     </div>
   );
 }

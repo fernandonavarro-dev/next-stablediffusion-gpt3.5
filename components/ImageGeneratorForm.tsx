@@ -2,11 +2,15 @@ import { MutableRefObject, useRef, useState } from 'react';
 import axios from 'axios';
 
 interface ImageGeneratorFormProps {
-  onGenerate: (imageUrl: string) => void;
+  onGenerate: (imageUrl: string, promptText: string) => void;
+  isLoading: boolean;
+  setIsLoading: (isLoading: boolean) => void;
 }
 
 export const ImageGeneratorForm: React.FC<ImageGeneratorFormProps> = ({
   onGenerate,
+  isLoading,
+  setIsLoading,
 }) => {
   // State variables
   const [key, setKey] = useState('');
@@ -29,6 +33,7 @@ export const ImageGeneratorForm: React.FC<ImageGeneratorFormProps> = ({
   // Function to handle image generation
   const handleGenerateImage = async () => {
     try {
+      setIsLoading(true);
       // Prepare options for API call
       const options = {
         key,
@@ -59,10 +64,17 @@ export const ImageGeneratorForm: React.FC<ImageGeneratorFormProps> = ({
       });
       const generatedImageUrl = response.data.output[0];
       setImageUrl(generatedImageUrl);
-      onGenerate(generatedImageUrl);
+      onGenerate(generatedImageUrl, prompt);
+      resetForm();
     } catch (error) {
       console.error('Error:', error);
+      setIsLoading(false);
     }
+  };
+
+  const resetForm = () => {
+    setPrompt('');
+    setNegativePrompt('');
   };
 
   // Render the form
@@ -246,17 +258,17 @@ export const ImageGeneratorForm: React.FC<ImageGeneratorFormProps> = ({
 
         <button
           type="submit"
-          className="bg-blue-500 text-blue-100 px-4 py-2 rounded"
+          className="bg-blue-500 text-blue-100 px-4 py-2 rounded-lg hover:bg-blue-700"
         >
           Generate Image
         </button>
+        {isLoading && (
+          <div className="mt-2 text-yellow-400 font-semibold">Loading...</div>
+        )}
       </form>
-
-      {/* {imageUrl && (
-        <script>
-          {`document.getElementById('generatedImage').src = "${imageUrl}";`}
-        </script>
-      )} */}
     </>
   );
 };
+function setIsLoading(arg0: boolean) {
+  throw new Error('Function not implemented.');
+}
