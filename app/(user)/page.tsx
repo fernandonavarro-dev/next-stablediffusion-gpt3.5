@@ -33,11 +33,24 @@ export default function Home() {
 
   return (
     <div className="h-screen text-gray-200 px-4">
-      <div className="container mx-auto">
-        <h1 className="text-4xl font-bold mb-14 mt-8 text-center">
+      <div className="container mx-auto text-center justify-between">
+        {/* <h1 className="text-4xl font-bold mb-14 mt-8 text-center">
+          Generate Images with Text
+        </h1> */}
+        <img
+          src="/stablediffusion-logo.png"
+          alt="StableDifussion AI Logo"
+          className="inline-block rounded-full h-20 px-16"
+        />
+        <h1 className="text-4xl font-bold inline-block mb-14 mt-8">
           Generate Images with Text
         </h1>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <img
+          src="/openai-logo.png"
+          alt="OpenAI Logo"
+          className="inline-block rounded-full h-20 px-10"
+        />
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-left">
           <div className="md:col-span-1">
             <ImageGeneratorForm
               onGenerate={handleGenerate}
