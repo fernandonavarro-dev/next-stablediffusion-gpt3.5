@@ -2,6 +2,7 @@
 import { useState, useEffect } from 'react';
 import ChatGPTAssistant from '../../components/ChatGPTAssistant';
 import { ImageGeneratorForm } from '../../components/ImageGeneratorForm';
+import ImageToTextForm from '../../components/ImageToTextForm';
 
 interface GeneratedImage {
   imageUrl: string;
@@ -12,6 +13,8 @@ export default function Home() {
   const [imageUrl, setImageUrl] = useState('');
   const [generatedImages, setGeneratedImages] = useState<GeneratedImage[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [showModal, setShowModal] = useState(false);
+  const [generatedDescription, setGeneratedDescription] = useState('');
 
   useEffect(() => {
     const savedImages = JSON.parse(
@@ -31,12 +34,19 @@ export default function Home() {
     setIsLoading(false);
   };
 
+  const handleDescriptionGenerated = (description: string) => {
+    console.log('Generated Description:', description);
+    setGeneratedDescription(description);
+    setShowModal(true);
+  };
+
+  const closeModal = () => {
+    setShowModal(false);
+  };
+
   return (
     <div className="h-screen text-gray-200 px-4">
       <div className="container mx-auto text-center justify-between">
-        {/* <h1 className="text-4xl font-bold mb-14 mt-8 text-center">
-          Generate Images with Text
-        </h1> */}
         <img
           src="/stablediffusion-logo.png"
           alt="StableDifussion AI Logo"
@@ -57,6 +67,11 @@ export default function Home() {
               isLoading={isLoading}
               setIsLoading={setIsLoading}
             />
+            <div className="mt-8">
+              <ImageToTextForm
+                onDescriptionGenerated={handleDescriptionGenerated}
+              />
+            </div>
           </div>
           <div className="md:col-span-2">
             {imageUrl && (
@@ -92,6 +107,34 @@ export default function Home() {
           </div>
         </div>
       </div>
+      {showModal && (
+        <div className="fixed z-10 inset-0 overflow-y-auto">
+          <div className="flex items-center justify-center min-h-screen">
+            <div
+              className="bg-black bg-opacity-50 w-full h-full absolute"
+              onClick={closeModal}
+            ></div>
+            <div className="bg-gray-800 p-8 w-11/12 md:w-1/2 xl:w-1/3 rounded-lg">
+              <h2 className="text-2xl font-bold mb-4">
+                Generated Description:
+              </h2>
+              <p className="text-sm mb-4">
+                Copy the description below and paste it into the StableDifussion
+                input prompt:
+              </p>
+              <pre className="bg-gray-700 p-4 rounded-lg text-sm whitespace-pre-wrap">
+                {generatedDescription}
+              </pre>
+              <button
+                className="mt-4 py-2 px-4 bg-blue-500 hover:bg-blue-700 text-white font-bold rounded"
+                onClick={closeModal}
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
       <ChatGPTAssistant />
     </div>
   );
