@@ -24,7 +24,7 @@ export default function Home() {
     setImageUrl(generatedImageUrl);
     const newGeneratedImages = [
       { imageUrl: generatedImageUrl, prompt: promptText },
-      ...generatedImages.slice(-9),
+      ...generatedImages.slice(-11),
     ];
     setGeneratedImages(newGeneratedImages);
     localStorage.setItem('generatedImages', JSON.stringify(newGeneratedImages));
