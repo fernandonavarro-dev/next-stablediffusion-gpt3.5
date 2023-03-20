@@ -15,6 +15,7 @@ export default function Home() {
   const [isLoading, setIsLoading] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [generatedDescription, setGeneratedDescription] = useState('');
+  const [imageToTextVisible, setImageToTextVisible] = useState(true);
 
   useEffect(() => {
     const savedImages = JSON.parse(
@@ -44,22 +45,28 @@ export default function Home() {
     setShowModal(false);
   };
 
+  const toggleImageToTextVisible = () => {
+    setImageToTextVisible((prevState) => !prevState);
+  };
+
   return (
     <div className="h-screen text-gray-200 px-4">
       <div className="container mx-auto text-center justify-between">
-        <img
-          src="/stablediffusion-logo.png"
-          alt="StableDifussion AI Logo"
-          className="inline-block rounded-full h-20 px-16"
-        />
-        <h1 className="text-4xl font-bold inline-block mb-14 mt-8">
-          Generate Images with Text
-        </h1>
-        <img
-          src="/openai-logo.png"
-          alt="OpenAI Logo"
-          className="inline-block rounded-full h-20 px-10"
-        />
+        <div className="bg-gray-700 mb-4">
+          <img
+            src="/stablediffusion-logo.png"
+            alt="StableDifussion AI Logo"
+            className="inline-block rounded-full h-20 px-16"
+          />
+          <h1 className="text-4xl font-semibold upp inline-block mb-14 mt-8">
+            Generate Images with Text
+          </h1>
+          <img
+            src="/openai-logo.png"
+            alt="OpenAI Logo"
+            className="inline-block rounded-full h-20 px-10"
+          />
+        </div>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-left">
           <div className="md:col-span-1">
             <ImageGeneratorForm
@@ -68,22 +75,35 @@ export default function Home() {
               setIsLoading={setIsLoading}
             />
             <div className="mt-8">
+              {/* <button
+                className="fixed bottom-0 left-0 w-full md:w-1/2 lg:w-1/3 py-2 bg-gray-800 hover:bg-gray-700 text-white font-bold rounded-t"
+                onClick={toggleImageToTextVisible}
+              >
+                {imageToTextVisible
+                  ? 'Hide Image to Text'
+                  : 'Show Image to Text'}
+              </button> */}
               <ImageToTextForm
-                onDescriptionGenerated={handleDescriptionGenerated}
+                // onDescriptionGenerated={handleDescriptionGenerated}
+                isVisible={imageToTextVisible}
               />
             </div>
           </div>
           <div className="md:col-span-2">
-            {imageUrl && (
-              <div className="mt-0 text-center">
-                <h2 className="text-2xl font-bold mb-2">Generated Image:</h2>
+            <div className="mt-0 text-center">
+              <h2 className="text-2xl font-bold mb-2">Generated Image:</h2>
+              {imageUrl ? (
                 <img
                   src={imageUrl}
                   alt="Generated"
                   className="border border-gray-300 inline-block"
                 />
-              </div>
-            )}
+              ) : (
+                <div className="border border-gray-300 ml-14 mt-10 w-10/12 h-96 flex items-center justify-center">
+                  <span className="text-6xl font-bold text-gray-400">?</span>
+                </div>
+              )}
+            </div>
           </div>
         </div>
         <div className="mt-8 pb-12">

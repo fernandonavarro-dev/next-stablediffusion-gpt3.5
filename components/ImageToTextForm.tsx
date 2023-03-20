@@ -1,31 +1,22 @@
 import { useState } from 'react';
-// import { ImageAnnotatorClient } from '@google-cloud/vision';
 import { labelDetection } from '../lib/googleCloudVision';
-// import axios from 'axios';
-
-// const client = new ImageAnnotatorClient();
+import { ExpandCollapseToggle } from './ExpandCollapseToggle';
 
 type Props = {
-  onDescriptionGenerated: (description: string) => void;
+  isVisible: boolean;
 };
 
-const ImageToTextForm = ({ onDescriptionGenerated }: Props) => {
+const ImageToTextForm = ({ isVisible }: Props) => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [loading, setLoading] = useState(false);
+  const [expanded, setExpanded] = useState(false);
+  const [generatedDescription, setGeneratedDescription] = useState('');
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       setSelectedFile(e.target.files[0]);
     }
   };
-
-  //   const fileToBase64 = (file: File): Promise<string> =>
-  //     new Promise((resolve, reject) => {
-  //       const reader = new FileReader();
-  //       reader.onload = () => resolve(reader.result as string);
-  //       reader.onerror = (error) => reject(error);
-  //       reader.readAsDataURL(file);
-  //     });
 
   const generateDescription = async () => {
     if (!selectedFile) return;
@@ -40,7 +31,7 @@ const ImageToTextForm = ({ onDescriptionGenerated }: Props) => {
           const apiKey = process.env.NEXT_PUBLIC_GOOGLE_VISION_API_KEY || '';
           const labels = await labelDetection(imageBase64, apiKey);
           const description = labels.join(', ');
-          onDescriptionGenerated(description);
+          setGeneratedDescription(description);
         }
       };
       reader.readAsDataURL(selectedFile);
@@ -51,23 +42,50 @@ const ImageToTextForm = ({ onDescriptionGenerated }: Props) => {
     setLoading(false);
   };
 
+  const handleToggleExpand = () => {
+    setExpanded(!expanded);
+  };
+
   return (
-    <div>
-      <h2 className="text-2xl font-bold mb-4">Image to Text:</h2>
-      <input
-        type="file"
-        accept="image/*"
-        onChange={handleFileChange}
-        className="mb-4"
-      />
-      <button
-        className="py-2 px-4 bg-blue-500 hover:bg-blue-700 text-white font-bold rounded"
-        onClick={generateDescription}
-        disabled={!selectedFile || loading}
-      >
-        {loading ? 'Generating...' : 'Generate Description'}
-      </button>
-    </div>
+    <>
+      {isVisible && (
+        <div
+          className={`fixed bottom-3 left-4 w-2/5 ${
+            expanded ? 'h-96' : 'h-16'
+          } bg-gray-800 p-4 rounded-lg shadow-lg`}
+        >
+          <div className="flex items-center justify-between">
+            <div className="text-xl font-semibold mb-4">Image to Text</div>
+            <ExpandCollapseToggle
+              expanded={expanded}
+              onToggleExpand={handleToggleExpand}
+            />
+          </div>
+          {expanded && (
+            <div>
+              <input
+                type="file"
+                accept="image/*"
+                onChange={handleFileChange}
+                className="mb-4"
+              />
+              <button
+                className="py-2 px-4 bg-blue-500 hover:bg-blue-700 text-white font-bold rounded mb-4"
+                onClick={generateDescription}
+                disabled={!selectedFile || loading}
+              >
+                {loading ? 'Generating...' : 'Generate Description'}
+              </button>
+              {generatedDescription && (
+                <pre className="bg-gray-700 p-4 rounded-lg text-sm whitespace-pre-wrap">
+                  {generatedDescription}
+                </pre>
+              )}
+            </div>
+          )}
+        </div>
+      )}
+    </>
   );
 };
 
