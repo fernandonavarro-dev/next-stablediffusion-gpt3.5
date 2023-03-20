@@ -1,8 +1,8 @@
 AI-Powered Image Generator with Next.js and Tailwind CSS
 
-# Next.js App with Tailwind CSS, Stable Diffusion API, and GPT-3.5 Turbo API
+# Next.js App with Tailwind CSS, Stable Diffusion API, and GPT-3.5 Turbo API, and Google Cloud Vision API
 
-This project is a Next.js app that demonstrates how to integrate Tailwind CSS for styling, the Stable Diffusion API for generating images from text, and the GPT-3.5 Turbo API for providing a chat assistant to help users with their prompts. This example demonstrates an AI-powered image generator that utilizes Tailwind CSS and Next.js. The application allows users to input text prompts and generates images based on the provided prompts. It showcases the integration of generative AI models for creative purposes with an intuitive and user-friendly interface.
+This project is a Next.js app that demonstrates how to integrate Tailwind CSS for styling, the Stable Diffusion API for generating images from text, the GPT-3.5 Turbo API for providing a chat assistant to help users with their prompts, and Google Cloud Vision API for generating text descriptions from images. This example demonstrates an AI-powered image generator that utilizes Tailwind CSS and Next.js. The application allows users to input text prompts and generates images based on the provided prompts. It showcases the integration of generative AI models for creative purposes with an intuitive and user-friendly interface.
 
 ## Features
 
@@ -10,9 +10,10 @@ This project is a Next.js app that demonstrates how to integrate Tailwind CSS fo
 - Tailwind CSS for rapid UI development
 - Stable Diffusion API integration for generating images
 - GPT-3.5 Turbo API integration for chat assistant functionality
-- Responsive design
+- Google Cloud Vision API integration for generating text descriptions from images
 - Integrated ChatGPT Assistant for guidance and suggestions on prompt engineering, via floating chat button and chatbox
 - Display of the last 10 generated images in a grid layout
+- Responsive design
 
 ## Getting Started
 
@@ -40,6 +41,7 @@ markdown
 
 NEXT_PUBLIC_STABLE_DIFFUSION_API_KEY=your_stable_diffusion_api_key
 NEXT_PUBLIC_OPENAI_API_KEY=your_openai_api_key
+NEXT_PUBLIC_GOOGLE_VISION_API_KEY=your_google_vision_api_key
 
 markdown
 
@@ -75,4 +77,4 @@ If you would like to contribute to this project, feel free to submit a pull requ
 
 This project is licensed under the MIT License.
 
-This README file provides a brief introduction to the app, its features, and instructions for ge
+This README file provides a brief introduction to the app, its features, and instructions for getting started, building, and deploying the app.

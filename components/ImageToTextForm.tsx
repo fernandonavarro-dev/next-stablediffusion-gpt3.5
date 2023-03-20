@@ -12,12 +12,14 @@ const ImageToTextForm = ({ isVisible }: Props) => {
   const [expanded, setExpanded] = useState(false);
   const [generatedDescription, setGeneratedDescription] = useState('');
 
+  // Handle file input change event
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       setSelectedFile(e.target.files[0]);
     }
   };
 
+  // Generate image description using Google Cloud Vision API
   const generateDescription = async () => {
     if (!selectedFile) return;
 
@@ -52,7 +54,7 @@ const ImageToTextForm = ({ isVisible }: Props) => {
         <div
           className={`fixed bottom-3 left-4 w-2/5 ${
             expanded ? 'h-96' : 'h-16'
-          } bg-gray-800 p-4 rounded-lg shadow-lg`}
+          } bg-gray-800 z-10 p-4 rounded-lg shadow-lg`}
         >
           <div className="flex items-center justify-between">
             <div className="text-xl font-semibold mb-4">Image to Text</div>
@@ -63,12 +65,14 @@ const ImageToTextForm = ({ isVisible }: Props) => {
           </div>
           {expanded && (
             <div>
+              {/* File input for selecting an image */}
               <input
                 type="file"
                 accept="image/*"
                 onChange={handleFileChange}
                 className="mb-4"
               />
+              {/* Button to generate image description */}
               <button
                 className="py-2 px-4 bg-blue-500 hover:bg-blue-700 text-white font-bold rounded mb-4"
                 onClick={generateDescription}
@@ -76,6 +80,7 @@ const ImageToTextForm = ({ isVisible }: Props) => {
               >
                 {loading ? 'Generating...' : 'Generate Description'}
               </button>
+              {/* Display generated description */}
               {generatedDescription && (
                 <pre className="bg-gray-700 p-4 rounded-lg text-sm whitespace-pre-wrap">
                   {generatedDescription}

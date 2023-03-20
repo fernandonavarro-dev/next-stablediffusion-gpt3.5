@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 import ChatGPTAssistant from '../../components/ChatGPTAssistant';
 import { ImageGeneratorForm } from '../../components/ImageGeneratorForm';
 import ImageToTextForm from '../../components/ImageToTextForm';
+import GeneratedImageItem from '../../components/GeneratedImageItem';
 
 interface GeneratedImage {
   imageUrl: string;
@@ -35,39 +36,53 @@ export default function Home() {
     setIsLoading(false);
   };
 
-  const handleDescriptionGenerated = (description: string) => {
-    console.log('Generated Description:', description);
-    setGeneratedDescription(description);
-    setShowModal(true);
-  };
+  // const handleDescriptionGenerated = (description: string) => {
+  //   console.log('Generated Description:', description);
+  //   setGeneratedDescription(description);
+  //   setShowModal(true);
+  // };
 
   const closeModal = () => {
     setShowModal(false);
   };
 
-  const toggleImageToTextVisible = () => {
-    setImageToTextVisible((prevState) => !prevState);
+  // const toggleImageToTextVisible = () => {
+  //   setImageToTextVisible((prevState) => !prevState);
+  // };
+
+  const handleDeleteImage = (index: number) => {
+    const newGeneratedImages = [...generatedImages];
+    newGeneratedImages.splice(index, 1);
+    setGeneratedImages(newGeneratedImages);
+    localStorage.setItem('generatedImages', JSON.stringify(newGeneratedImages));
   };
 
   return (
     <div className="h-screen text-gray-200 px-4">
-      <div className="container mx-auto text-center justify-between">
-        <div className="bg-gray-700 mb-4">
-          <img
-            src="/stablediffusion-logo.png"
-            alt="StableDifussion AI Logo"
-            className="inline-block rounded-full h-20 px-16"
-          />
-          <h1 className="text-4xl font-semibold upp inline-block mb-14 mt-8">
+      <div className="container mx-auto text-center">
+        <div className="bg-gray-700 p-4">
+          <div className="flex justify-around">
+            <img
+              src="/stablediffusion-logo-cropped.png"
+              alt="StableDifussion AI Logo"
+              className="inline-block rounded-full h-24"
+            />
+            <img
+              src="/openai-logo.png"
+              alt="OpenAI Logo"
+              className="inline-block rounded-full h-24"
+            />
+            <img
+              src="/google-cloud-vision-api-logo-cropped.png"
+              alt="Google Cloud Vision API Logo"
+              className="inline-block rounded-full h-20"
+            />
+          </div>
+          <h1 className="text-4xl font-semibold upp inline-block mb-10 mt-8">
             Generate Images with Text
           </h1>
-          <img
-            src="/openai-logo.png"
-            alt="OpenAI Logo"
-            className="inline-block rounded-full h-20 px-10"
-          />
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-left">
+        <div className="grid grid-cols-1 md:grid-cols-3 mt-8 gap-4 text-left">
           <div className="md:col-span-1">
             <ImageGeneratorForm
               onGenerate={handleGenerate}
@@ -75,14 +90,6 @@ export default function Home() {
               setIsLoading={setIsLoading}
             />
             <div className="mt-8">
-              {/* <button
-                className="fixed bottom-0 left-0 w-full md:w-1/2 lg:w-1/3 py-2 bg-gray-800 hover:bg-gray-700 text-white font-bold rounded-t"
-                onClick={toggleImageToTextVisible}
-              >
-                {imageToTextVisible
-                  ? 'Hide Image to Text'
-                  : 'Show Image to Text'}
-              </button> */}
               <ImageToTextForm
                 // onDescriptionGenerated={handleDescriptionGenerated}
                 isVisible={imageToTextVisible}
@@ -99,8 +106,10 @@ export default function Home() {
                   className="border border-gray-300 inline-block"
                 />
               ) : (
-                <div className="border border-gray-300 ml-14 mt-10 w-10/12 h-96 flex items-center justify-center">
-                  <span className="text-6xl font-bold text-gray-400">?</span>
+                <div className="border border-gray-300 ml-14 mt-10 w-10/12 h-96 flex items-center justify-center animate-pulse">
+                  <span className="text-6xl font-bold text-gray-400 animate-pulse">
+                    ?
+                  </span>
                 </div>
               )}
             </div>
@@ -112,17 +121,12 @@ export default function Home() {
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {generatedImages.map((generatedImage, index) => (
-              <div
+              <GeneratedImageItem
                 key={index}
-                className="bg-gray-700 p-4 rounded-lg shadow-md border border-gray-600"
-              >
-                <img
-                  src={generatedImage.imageUrl}
-                  alt="Generated"
-                  className="border border-gray-300 w-full h-48 object-cover object-center"
-                />
-                <p className="text-sm p-2 mb-2">{generatedImage.prompt}</p>
-              </div>
+                imageUrl={generatedImage.imageUrl}
+                prompt={generatedImage.prompt}
+                onDelete={() => handleDeleteImage(index)}
+              />
             ))}
           </div>
         </div>
