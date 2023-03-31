@@ -4,7 +4,7 @@ const API_URL = 'https://stablediffusionapi.com/api/v3/text2img';
 const API_KEY = process.env.NEXT_PUBLIC_STABLEDIFFUSION_API_KEY;
 
 // Define Options interface for specifying image generation options
-interface Options {
+export interface Options {
   width?: number;
   height?: number;
   samples?: number;
