@@ -25,8 +25,6 @@ To run the project locally, follow these steps:
 
 git clone https://github.com/yourusername/nextjs-tailwind-stablediffusion-gpt3.git
 
-css
-
 
 2. Change to the project directory:
 
@@ -39,8 +37,6 @@ markdown
 
 npm install
 
-markdown
-
 
 4. Create a `.env.local` file in the root folder and add your API keys for Stable Diffusion, GPT-3.5 Turbo, and Google Cloud Vision:
 
@@ -48,17 +44,14 @@ NEXT_PUBLIC_STABLE_DIFFUSION_API_KEY=your_stable_diffusion_api_key
 NEXT_PUBLIC_OPENAI_API_KEY=your_openai_api_key
 NEXT_PUBLIC_GOOGLE_VISION_API_KEY=your_google_vision_api_key
 
-markdown
-
 
 5. Run the development server:
 
 npm run dev
 
-less
-
 
 6. Open your browser and visit [http://localhost:3000](http://localhost:3000) to see the app.
+
 
 ## Building and Deploying
 
@@ -66,14 +59,10 @@ To build the app for production, run:
 
 npm run build
 
-css
-
 
 This command will generate a production-optimized build in the `.next` folder. To start the production server, run:
 
 npm run start
-
-vbnet
 
 
 For deploying the app, refer to the [Next.js deployment documentation](https://nextjs.org/docs/deployment) for various hosting options.
