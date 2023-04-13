@@ -30,7 +30,6 @@ git clone https://github.com/yourusername/nextjs-tailwind-stablediffusion-gpt3.g
 
 cd nextjs-tailwind-stablediffusion-gpt3
 
-markdown
 
 
 3. Install the dependencies:
